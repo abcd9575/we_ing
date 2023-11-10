@@ -1,0 +1,17 @@
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\we_ing.exe.config
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\we_ing.exe
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\we_ing.pdb
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\AForge.dll
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\AForge.Imaging.dll
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\AForge.Math.dll
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\AForge.xml
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\AForge.Imaging.xml
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\bin\Debug\AForge.Math.xml
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.csprojAssemblyReference.cache
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.Form1.resources
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.Properties.Resources.resources
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.csproj.GenerateResource.cache
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.csproj.CoreCompileInputs.cache
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.csproj.CopyComplete
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.exe
+C:\Users\김진혁\Source\Repos\we_ing\we_ing\obj\Debug\we_ing.pdb
