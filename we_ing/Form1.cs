@@ -20,6 +20,7 @@ namespace we_ing
         private Bitmap markedImage; // 빨간색 크로스가 그려진 이미지를 저장할 변수
         private Point initialMousePosition;
         private Point currentMousePosition;
+        private bool isCtrlClick = false;
 
 
         public Form1()
@@ -95,14 +96,67 @@ namespace we_ing
 
         private void pictureBox_MouseClick(object sender, MouseEventArgs e)
         {
+
+            // Ctrl + 클릭이 감지되면
+            if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                // Ctrl + 클릭이 감지되었음을 표시
+                isCtrlClick = true;
+                    // 첫 번째 클릭 좌표 변경
+                    if (!firstClickPoint.IsEmpty) // 첫 번째 클릭 좌표가 이미 설정되어 있으면
+                {
+                    // 기존 첫 번째 클릭 좌표에 화면 중앙으로부터의 상대적 이동값을 더함
+                    firstClickPoint.X += e.X - this.Width / 2;
+                    firstClickPoint.Y += e.Y - this.Height / 2;
+                }
+                else // 첫 번째 클릭 좌표가 아직 설정되지 않았으면
+                {
+                    // 첫 번째 클릭 좌표를 직접 설정
+                    firstClickPoint = e.Location;
+                }
+
+                // PictureBox에 빨간색 크로스 그리기
+                using (Graphics g = Graphics.FromImage(markedImage))
+                {
+                    using (Pen pen = new Pen(Color.Red, 1))
+                    {
+                        g.Clear(Color.Transparent); // 이전에 그려진 크로스를 지움
+                        g.DrawLine(pen, firstClickPoint.X - 100000, firstClickPoint.Y, firstClickPoint.X + 100000, firstClickPoint.Y);
+                        g.DrawLine(pen, firstClickPoint.X, firstClickPoint.Y - 100000, firstClickPoint.X, firstClickPoint.Y + 100000);
+                    }
+                }
+
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    // 클릭한 지점의 이미지를 세 배 확대
+                    using (Bitmap zoomedImage = new Bitmap(markedImage, markedImage.Width * 3, markedImage.Height * 3))
+                    {
+                        // 크로스가 그려진 이미지를 PictureBox에 표시
+                        pictureBox.Image = (Bitmap)zoomedImage.Clone();
+                    }
+                }));
+
+                // 마우스 포인터를 화면 중앙으로 이동
+                Cursor.Position = this.PointToScreen(new Point(this.Width / 2, this.Height / 2));
+
+                // 초기 마우스 위치 저장
+                initialMousePosition = Cursor.Position;
+
+                // PictureBox 이미지 갱신
+                pictureBox.Invalidate();
+             
+                // Ctrl + 클릭 처리가 끝났음을 표시
+                isCtrlClick = false;
+        }
+
             // 첫 번째 클릭 좌표 저장
-            if (firstClickPoint == Point.Empty && CaptureButton.Visible == false)
+            else if (firstClickPoint == Point.Empty && CaptureButton.Visible == false)
             {
                 firstClickPoint = e.Location;
                 // PictureBox에 빨간색 크로스 그리기
                 using (Graphics g = Graphics.FromImage(markedImage))
                 {
-                    using (Pen pen = new Pen(Color.Red, 3))
+                    using (Pen pen = new Pen(Color.Red, 1))
                     {
                         g.DrawLine(pen, firstClickPoint.X - 100000, firstClickPoint.Y, firstClickPoint.X + 100000, firstClickPoint.Y);
                         g.DrawLine(pen, firstClickPoint.X, firstClickPoint.Y - 100000, firstClickPoint.X, firstClickPoint.Y + 100000);
@@ -143,7 +197,7 @@ namespace we_ing
                 // 사각형 영역의 이미지 추출
                 using (Bitmap croppedImage = screenshot.Clone(rect, screenshot.PixelFormat))
                 {
-                    // 확대할 이미지의 크기 계산
+                    // 확대할 이미지의 크기 계산``
                     int newWidth = croppedImage.Width * 3;
                     int newHeight = croppedImage.Height * 3;
 
@@ -181,7 +235,7 @@ namespace we_ing
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!firstClickPoint.IsEmpty)
+            if (!firstClickPoint.IsEmpty && !isCtrlClick)
             {
                 // 현재 마우스 위치 저장
                 currentMousePosition = Cursor.Position;
