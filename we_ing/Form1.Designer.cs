@@ -44,17 +44,16 @@ namespace we_ing
             // pictureBox
             // 
             this.pictureBox.Location = new System.Drawing.Point(-4, 4);
-            this.pictureBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(435, 210);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
-            this.pictureBox.Visible = true;
             // 
             // CaptureButton
             // 
             this.CaptureButton.Location = new System.Drawing.Point(211, 157);
-            this.CaptureButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CaptureButton.Margin = new System.Windows.Forms.Padding(2);
             this.CaptureButton.Name = "CaptureButton";
             this.CaptureButton.Size = new System.Drawing.Size(151, 30);
             this.CaptureButton.TabIndex = 1;
@@ -69,7 +68,7 @@ namespace we_ing
             this.ClientSize = new System.Drawing.Size(431, 225);
             this.Controls.Add(this.CaptureButton);
             this.Controls.Add(this.pictureBox);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
