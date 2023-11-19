@@ -16,11 +16,16 @@ namespace we_ing
         private Point firstClickPoint;
         private Point secondClickPoint;
         private Size originalSize; // 창의 원래 크기를 저장할 변수
+        private Size originalPictureBoxSize; // PictureBox의 원래 크기를 저장할 변수
         private Point originalLocation; // 창의 원래 위치를 저장할 변수
         private Bitmap markedImage; // 빨간색 크로스가 그려진 이미지를 저장할 변수
         private Point initialMousePosition;
         private Point currentMousePosition;
         private bool isCtrlClick = false;
+        private Size originalFormSize; // Form의 원래 크기를 저장할 변수
+        private Size originalPictureBox2Size; // PictureBox2의 원래 크기를 저장할 변수
+        private int dx = 0;
+        private int dy = 0;
 
 
         public Form1()
@@ -31,6 +36,9 @@ namespace we_ing
             pictureBox.MouseClick += new MouseEventHandler(pictureBox_MouseClick);
             pictureBox.Paint += new PaintEventHandler(pictureBox_Paint);
             pictureBox.MouseMove += new MouseEventHandler(pictureBox_MouseMove);
+            
+            // 프로그램이 시작할 때의 PictureBox의 크기를 저장
+            originalPictureBoxSize = pictureBox.Size;
 
             // PictureBox의 배경색을 회색으로 설정
             pictureBox.BackColor = Color.Gray;
@@ -40,7 +48,10 @@ namespace we_ing
 
             // 프로그램이 시작할 때의 창의 크기를 저장
             originalSize = this.Size;
-            
+
+            // 프로그램이 시작할 때의 Form과 PictureBox2의 크기를 저장
+            originalFormSize = this.Size;
+            originalPictureBox2Size = pictureBox2.Size;
         }
 
         private void Form_KeyDown(object sender, KeyEventArgs e)
@@ -49,6 +60,7 @@ namespace we_ing
             {
                 // ESC 키를 누르면 PictureBox를 비우고 창의 상태를 원래대로 복원
                 pictureBox.Image = null;
+                pictureBox.Visible = false;
                 this.Size = originalSize; // 창의 크기를 원래 크기로 복원
                 this.Location = originalLocation; // 창의 위치를 원래 위치로 복원
                 this.WindowState = FormWindowState.Normal;
@@ -64,6 +76,13 @@ namespace we_ing
             secondClickPoint = Point.Empty;
             originalLocation = this.Location;
             CaptureButton.Visible = false;
+            
+            // Capture 버튼이 눌렸을 때 Label과 PictureBox2를 가림
+            Label1.Visible = false;
+            Label2.Visible = false;
+            pictureBox.Visible = true;
+            pictureBox2.Visible = false;
+
             // 현재 화면 캡쳐
             screenshot = CaptureScreen();
             markedImage = (Bitmap)screenshot.Clone(); // 크로스를 그릴 이미지 복사
@@ -103,7 +122,7 @@ namespace we_ing
                 // Ctrl + 클릭이 감지되었음을 표시
                 isCtrlClick = true;
                     // 첫 번째 클릭 좌표 변경
-                    if (!firstClickPoint.IsEmpty) // 첫 번째 클릭 좌표가 이미 설정되어 있으면
+                if (!firstClickPoint.IsEmpty) // 첫 번째 클릭 좌표가 이미 설정되어 있으면
                 {
                     // 기존 첫 번째 클릭 좌표에 화면 중앙으로부터의 상대적 이동값을 더함
                     firstClickPoint.X += e.X - this.Width / 2;
@@ -182,8 +201,8 @@ namespace we_ing
             else if (secondClickPoint == Point.Empty && CaptureButton.Visible == false)
             {
                 // 확대된 이미지 상에서의 클릭 좌표를 원본 이미지에 대응하는 좌표로 변환
-                int x = e.X / 3 + firstClickPoint.X - pictureBox.Width / (2 * 3);
-                int y = e.Y / 3 + firstClickPoint.Y - pictureBox.Height / (2 * 3);
+                int x = (int)Math.Round((e.X + dx) / 3.0);
+                int y = (int)Math.Round((e.Y + dy) / 3.0);
                 secondClickPoint = new Point(x, y);
                 //secondClickPoint = e.Location;
 
@@ -193,27 +212,39 @@ namespace we_ing
                 int width = Math.Abs(firstClickPoint.X - secondClickPoint.X);
                 int height = Math.Abs(firstClickPoint.Y - secondClickPoint.Y);
                 Rectangle rect = new Rectangle(left, top, width, height);
+                
+                // PictureBox의 크기를 원래 크기로 복원
+                pictureBox.Size = originalPictureBoxSize;
+
+                // Capture 버튼이 눌렸을 때 Form과 PictureBox2의 크기를 원래 크기로 복원
+                this.Size = originalFormSize;
+                pictureBox2.Size = originalPictureBox2Size;
+
+                Label1.Text = $"첫 번째 좌표: ({firstClickPoint.X}, {firstClickPoint.Y})";
+                Label2.Text = $"두 번째 좌표: ({secondClickPoint.X}, {secondClickPoint.Y})";
 
                 // 사각형 영역의 이미지 추출
                 using (Bitmap croppedImage = screenshot.Clone(rect, screenshot.PixelFormat))
                 {
-                    // 확대할 이미지의 크기 계산``
-                    int newWidth = croppedImage.Width * 3;
-                    int newHeight = croppedImage.Height * 3;
+                    // 확대할 이미지의 크기 계산
+                    int newWidth = croppedImage.Width;
+                    int newHeight = croppedImage.Height;
 
                     // 확대할 이미지 생성
                     using (Bitmap zoomedImage = new Bitmap(croppedImage, newWidth, newHeight))
                     {
                         // 확대한 이미지를 PictureBox에 표시
-                        pictureBox.Image = (Bitmap)zoomedImage.Clone();
+                        pictureBox2.Image = (Bitmap)zoomedImage.Clone();
+                        Clipboard.SetImage((Bitmap)zoomedImage.Clone());
                     }
                 }
 
-                // PictureBox 이미지 갱신
-                pictureBox.Invalidate();
+                // Capture 버튼이 눌렸을 때 Label과 PictureBox2를 보이게 함
+                Label1.Visible = true;
+                Label2.Visible = true;
+                pictureBox.Visible = false;
+                pictureBox2.Visible = true;
 
-                // 두 좌표를 반환하고 PictureBox를 비우며 창의 상태를 원래대로 복원
-                MessageBox.Show($"첫 번째 좌표: ({firstClickPoint.X}, {firstClickPoint.Y}), 두 번째 좌표: ({secondClickPoint.X}, {secondClickPoint.Y})");
                 pictureBox.Image = null;
                 this.WindowState = FormWindowState.Normal;
                 this.FormBorderStyle = FormBorderStyle.Sizable;
@@ -227,6 +258,15 @@ namespace we_ing
                 this.Location = originalLocation; // 창의 위치를 원래 위치로 복원
                 CaptureButton.Visible = true;
 
+                // PictureBox2의 크기를 이미지의 크기에 맞게 조정
+                pictureBox2.Size = pictureBox2.Image.Size;
+
+                // 폼의 크기가 PictureBox2의 크기를 수용할 수 없으면 폼의 크기를 PictureBox2의 크기에 맞게 조정
+                if (this.Width < pictureBox2.Width || this.Height < pictureBox2.Height)
+                {
+                    this.Size = new Size(Math.Max(this.Width, pictureBox2.Width), Math.Max(this.Height, pictureBox2.Height));
+                }
+
                 // 가비지 컬렉션 강제 실행
                 GC.Collect();
 
@@ -239,6 +279,10 @@ namespace we_ing
             {
                 // 현재 마우스 위치 저장
                 currentMousePosition = Cursor.Position;
+
+                // 마우스 이동에 따른 그림 이동 계산
+                dx = (int)Math.Round((initialMousePosition.X - currentMousePosition.X) / 3.0);
+                dy = (int)Math.Round((initialMousePosition.Y - currentMousePosition.Y) / 3.0);
 
                 // PictureBox 이미지 갱신
                 pictureBox.Invalidate();
