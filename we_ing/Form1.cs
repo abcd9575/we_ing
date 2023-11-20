@@ -201,9 +201,9 @@ namespace we_ing
             else if (secondClickPoint == Point.Empty && CaptureButton.Visible == false)
             {
                 // 확대된 이미지 상에서의 클릭 좌표를 원본 이미지에 대응하는 좌표로 변환
-                int x = (int)Math.Round((e.X + dx) / 3.0);
-                int y = (int)Math.Round((e.Y + dy) / 3.0);
-                secondClickPoint = new Point(x, y);
+                int x = dx * (-1) * 2;
+                int y = dy * (-1) * 2;
+                secondClickPoint = new Point(firstClickPoint.X + x, firstClickPoint.Y + y);
                 //secondClickPoint = e.Location;
 
                 // 클릭한 두 지점을 기준으로 사각형 만들기
@@ -262,9 +262,9 @@ namespace we_ing
                 pictureBox2.Size = pictureBox2.Image.Size;
 
                 // 폼의 크기가 PictureBox2의 크기를 수용할 수 없으면 폼의 크기를 PictureBox2의 크기에 맞게 조정
-                if (this.Width < pictureBox2.Width || this.Height < pictureBox2.Height)
+                if (this.Width - 40 < pictureBox2.Width || this.Height - 144 < pictureBox2.Height)
                 {
-                    this.Size = new Size(Math.Max(this.Width, pictureBox2.Width), Math.Max(this.Height, pictureBox2.Height));
+                    this.Size = new Size(Math.Max(this.Width - 40, pictureBox2.Width + 50), Math.Max(this.Height - 144, pictureBox2.Height + 150));
                 }
 
                 // 가비지 컬렉션 강제 실행
